@@ -1,13 +1,28 @@
 import os
 from fastapi import FastAPI, status, Body
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv();
+
+app = FastAPI(title="Attendance System");
+
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET","POST"],
+    allow_headers=["*"]
+)
 
 Expected_userName = os.getenv("ADMIN_USERNAME");
 Expected_password = os.getenv("ADMIN_PASSWORD");
 
-app = FastAPI(title="Attendance System");
 
 @app.get("/")
 def root():
@@ -15,7 +30,7 @@ def root():
 
 
 @app.post("/login")
-def login(
+async def login(
     username:str = Body(..., embed=True),
     password:str = Body(..., embed=True)
     ):
